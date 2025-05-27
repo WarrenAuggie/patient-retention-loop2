@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auggie's Patient Retention Loop</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 900px;
+            position: relative;
+        }
+
+        .title {
+            text-align: center;
+            color: white;
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 40px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .loop-container {
+            position: relative;
+            width: 100%;
+            height: 600px;
+            margin: 0 auto;
+        }
+
+        .center-circle {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 160px;
+            height: 160px;
+            background: linear-gradient(135deg, #ff6b6b, #feca57);
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-weight: bold;
+            text-align: center;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+            z-index: 10;
+        }
+
+        .center-title {
+            font-size: 1.2rem;
+            margin-bottom: 5px;
+        }
+
+        .center-subtitle {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .stage {
+            position: absolute;
+            width: 180px;
+            height: 120px;
+            border-radius: 15px;
+            color: white;
+            padding: 15px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .stage:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.25);
+        }
+
+        .stage-number {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .stage-title {
+            font-size: 1rem;
+            font-weight: bold;
+            margin-bottom: 8px;
+            line-height: 1.2;
+        }
+
+        .stage-description {
+            font-size: 0.8rem;
+            opacity: 0.9;
+            line-height: 1.3;
+        }
+
+        /* Individual stage positioning and colors */
+        .stage-1 {
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .stage-2 {
+            background: linear-gradient(135deg, #43e97b, #38f9d7);
+            top: 15%;
+            right: 5%;
+        }
+
+        .stage-3 {
+            background: linear-gradient(135deg, #fa709a, #fee140);
+            bottom: 15%;
+            right: 5%;
+        }
+
+        .stage-4 {
+            background: linear-gradient(135deg, #a8edea, #fed6e3);
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #333;
+        }
+
+        .stage-5 {
+            background: linear-gradient(135deg, #ffecd2, #fcb69f);
+            bottom: 15%;
+            left: 5%;
+            color: #333;
+        }
+
+        .stage-6 {
+            background: linear-gradient(135deg, #ff9a9e, #fecfef);
+            top: 15%;
+            left: 5%;
+        }
+
+
+
+        /* Curved path lines */
+        .path-line {
+            position: absolute;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        .outer-path {
+            width: 520px;
+            height: 520px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border-style: dashed;
+            animation: rotate 20s linear infinite;
+        }
+
+        .inner-path {
+            width: 380px;
+            height: 380px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border-style: dotted;
+            animation: rotate-reverse 15s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: translate(-50%, -50%) rotate(0deg); }
+            to { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        @keyframes rotate-reverse {
+            from { transform: translate(-50%, -50%) rotate(0deg); }
+            to { transform: translate(-50%, -50%) rotate(-360deg); }
+        }
+
+        .subtitle {
+            text-align: center;
+            color: white;
+            font-size: 1.1rem;
+            margin-top: 30px;
+            opacity: 0.9;
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .loop-container {
+                height: 500px;
+            }
+            
+            .stage {
+                width: 140px;
+                height: 100px;
+                padding: 10px;
+            }
+            
+            .stage-title {
+                font-size: 0.9rem;
+            }
+            
+            .stage-description {
+                font-size: 0.7rem;
+            }
+            
+            .center-circle {
+                width: 120px;
+                height: 120px;
+            }
+            
+            .center-title {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="title">🌀 Auggie's Patient Retention Loop</h1>
+        
+        <div class="loop-container">
+            <!-- Background path lines -->
+            <div class="path-line outer-path"></div>
+            <div class="path-line inner-path"></div>
+            
+            <!-- Center circle -->
+            <div class="center-circle">
+                <div class="center-title">Continuous</div>
+                <div class="center-subtitle">Patient Journey</div>
+            </div>
+            
+            <!-- Stage 1: New Patient Acquisition -->
+            <div class="stage stage-1">
+                <div class="stage-number">1</div>
+                <div class="stage-title">New Patient Acquisition</div>
+                <div class="stage-description">Re-engage old leads, pre-visit surveys</div>
+            </div>
+            
+            <!-- Stage 2: Initial Appointment -->
+            <div class="stage stage-2">
+                <div class="stage-number">2</div>
+                <div class="stage-title">Initial Appointment</div>
+                <div class="stage-description">Build trust, uncover goals, post-visit check-ins</div>
+            </div>
+            
+            <!-- Stage 3: Treatment Plan Follow-Up -->
+            <div class="stage stage-3">
+                <div class="stage-number">3</div>
+                <div class="stage-title">Treatment Plan Follow-Up</div>
+                <div class="stage-description">Convert proposed plans, personalise nudges</div>
+            </div>
+            
+            <!-- Stage 4: Post-Treatment Experience -->
+            <div class="stage stage-4">
+                <div class="stage-number">4</div>
+                <div class="stage-title">Post-Treatment Experience</div>
+                <div class="stage-description">Close the loop, ask for reviews or rebookings</div>
+            </div>
+            
+            <!-- Stage 5: Recall & Rebookings -->
+            <div class="stage stage-5">
+                <div class="stage-number">5</div>
+                <div class="stage-title">Recall & Rebookings</div>
+                <div class="stage-description">Time + risk-based nudges, compounding retention</div>
+            </div>
+            
+            <!-- Stage 6: Dormant Patient Reactivation -->
+            <div class="stage stage-6">
+                <div class="stage-number">6</div>
+                <div class="stage-title">Dormant Patient Reactivation</div>
+                <div class="stage-description">Campaigns for patients inactive >9 months</div>
+            </div>
+            
+
+        </div>
+        
+        <p class="subtitle">
+            ✨ Patients can re-enter at any stage, creating a compounding retention effect
+        </p>
+    </div>
+</body>
+</html>
